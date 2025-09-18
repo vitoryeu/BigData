@@ -1,0 +1,21 @@
+C:\hadoop\sbin>start-dfs.cmd
+C:\hadoop\sbin>start-yarn.cmd
+
+generate_logs.py
+
+hdfs dfs -mkdir -p /input
+hdfs dfs -put -f C:\Users\VitaliiOryshchyn\Desktop\EU\ThirdSemester\BigData\Lab1_2\data\input\weblog.log /input/
+hdfs dfs -ls /input
+
+cd C:\Users\VitaliiOryshchyn\Desktop\EU\ThirdSemester\BigData\Lab1_2\mr>
+
+hdfs dfs -rm -r /output/page_counts_1 2>NUL
+hadoop jar C:\hadoop\share\hadoop\tools\lib\hadoop-streaming-3.2.4.jar -D mapreduce.job.reduces=1 -file mapper.py -file reducer_count.py -mapper "python mapper.py" -reducer "python reducer_count.py" -input /input/weblog.log -output /output/page_counts_1
+
+hdfs dfs -rm -r /output/page_counts_sorted 2>NUL
+hadoop jar C:\hadoop\share\hadoop\tools\lib\hadoop-streaming-3.2.4.jar -D mapreduce.job.reduces=1 -file reducer_sort.py -file identity_mapper.py -mapper "python identity_mapper.py" -reducer "python reducer_sort.py" -input /output/page_counts_1/part-00000 -output /output/page_counts_sorted
+
+hdfs dfs -cat /output/page_counts_sorted/part-00000 | more
+
+mkdir ..\output 2>NUL
+hdfs dfs -get -f /output/page_counts_sorted/part-00000 C:\Users\VitaliiOryshchyn\Desktop\EU\ThirdSemester\BigData\Lab1_2\output\page_counts_sorted.tsv
