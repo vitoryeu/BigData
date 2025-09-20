@@ -1,0 +1,10 @@
+simulate:
+  interval_ms: 600
+  jitter_ms: 200
+  shuffle: true
+  continuous: true
+text:
+  remove_urls: true
+  remove_hashtags: true
+  remove_mentions: true
+  to_lower: true
